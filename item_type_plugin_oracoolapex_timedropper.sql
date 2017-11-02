@@ -55,7 +55,6 @@ wwv_flow_api.create_plugin(
 '  l_border_color         varchar2(7);',
 '  l_theme                varchar2(10);',
 '  l_html                 varchar2(4000);',
-'  l_options              varchar2(4000);',
 '  --',
 '  --Convert Yes/No To True/False BOOLEAN Type',
 '  --',
