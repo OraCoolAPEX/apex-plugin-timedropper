@@ -33,7 +33,7 @@ wwv_flow_api.create_plugin(
 ,p_name=>'ORACOOLAPEX.TIMEDROPPER'
 ,p_display_name=>'Time Dropper'
 ,p_supported_ui_types=>'DESKTOP'
-,p_supported_component_types=>'APEX_APPLICATION_PAGE_ITEMS:APEX_APPL_PAGE_IG_COLUMNS'
+,p_supported_component_types=>'APEX_APPLICATION_PAGE_ITEMS'
 ,p_javascript_file_urls=>'#PLUGIN_FILES#server/lib/timedropper/timedropper#MIN#.js'
 ,p_css_file_urls=>'#PLUGIN_FILES#server/lib/timedropper/timedropper#MIN#.css'
 ,p_plsql_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
