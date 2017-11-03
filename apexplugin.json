@@ -1,7 +1,7 @@
 {
   "name" : "Time Dropper",
   "version" : "1.0.0",
-  "description" : "Oracle APEX Item Plug-in based on the jQuery UI timepicker Timedropper1",
+  "description" : "An Oracle APEX Item Plug-in based on the jQuery UI timepicker Timedropper.",
   "keywords" : ["timepicker","plugin"],
   "homepage" : "https://github.com/OraCoolAPEX/apex-plugin-timedropper",
   "bugs" : {
@@ -27,7 +27,7 @@
         "internalName" : "ORACOOLAPEX.TIMEDROPPER",
         "type": "item",
         "demo": "https://apex.oracle.com/pls/apex/f?p=OraCoolAPEX:9",
-        "previewImage" : ""
+        "previewImage" : "https://github.com/OraCoolAPEX/apex-plugin-timedropper/blob/master/preview.gif"
       }
     }
   }
