@@ -27,7 +27,7 @@
         "internalName" : "ORACOOLAPEX.TIMEDROPPER",
         "type": "item",
         "demo": "https://apex.oracle.com/pls/apex/f?p=OraCoolAPEX:9",
-        "previewImage" : "https://github.com/OraCoolAPEX/apex-plugin-timedropper/blob/master/preview.gif"
+        "previewImage" : "https://raw.githubusercontent.com/OraCoolAPEX/apex-plugin-timedropper/master/preview.gif"
       }
     }
   }
