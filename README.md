@@ -51,6 +51,16 @@ An Oracle APEX Item Plug-in based on the jQuery UI timepicker Timedropper1.
 | Vita-Red   |
 | Vita-Slate |
 
+## Versioning
+
+[Semantic Versioning](https://semver.org/)
+
+(`MAJOR.MINOR.PATCH`)
+
+* MAJOR version increments when breaking backwards compatibility
+* MINOR version increments when adding new functionality in a backwards-compatible manner
+* PATCH version increments when fixing bugs and other miscellaneous changes
+
 ## License
 
 ![MIT](/LICENSE)
