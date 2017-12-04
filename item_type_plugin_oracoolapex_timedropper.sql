@@ -15,7 +15,7 @@ wwv_flow_api.import_begin (
  p_version_yyyy_mm_dd=>'2016.08.24'
 ,p_release=>'5.1.3.00.05'
 ,p_default_workspace_id=>14861999474993887539
-,p_default_application_id=>42424242
+,p_default_application_id=>44444222
 ,p_default_owner=>'ORACOOLAPEX'
 );
 end;
@@ -28,14 +28,19 @@ end;
 prompt --application/shared_components/plugins/item_type/oracoolapex_timedropper
 begin
 wwv_flow_api.create_plugin(
- p_id=>wwv_flow_api.id(31399573127279589756)
+ p_id=>wwv_flow_api.id(69643438595086450207)
 ,p_plugin_type=>'ITEM TYPE'
 ,p_name=>'ORACOOLAPEX.TIMEDROPPER'
 ,p_display_name=>'Time Dropper'
 ,p_supported_ui_types=>'DESKTOP'
 ,p_supported_component_types=>'APEX_APPLICATION_PAGE_ITEMS'
-,p_javascript_file_urls=>'#PLUGIN_FILES#server/lib/timedropper/timedropper#MIN#.js'
-,p_css_file_urls=>'#PLUGIN_FILES#server/lib/timedropper/timedropper#MIN#.css'
+,p_javascript_file_urls=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'#PLUGIN_FILES#server/lib/timedropper/timedropper#MIN#.js',
+'#PLUGIN_FILES#server/js/apextimedropper#MIN#.js'))
+,p_css_file_urls=>wwv_flow_string.join(wwv_flow_t_varchar2(
+'#PLUGIN_FILES#server/lib/timedropper/timedropper#MIN#.css',
+'#PLUGIN_FILES#server/css/apextimedropper#MIN#.css',
+''))
 ,p_plsql_code=>wwv_flow_string.join(wwv_flow_t_varchar2(
 'procedure render_timedropper (',
 '  p_item   in            apex_plugin.t_item,',
@@ -43,6 +48,7 @@ wwv_flow_api.create_plugin(
 '  p_param  in            apex_plugin.t_item_render_param,',
 '  p_result in out nocopy apex_plugin.t_item_render_result )',
 'is',
+'  l_logging              boolean;',
 '  l_autoswitch           boolean;',
 '  l_meridians            boolean;',
 '  l_format               varchar2(7);',
@@ -76,9 +82,9 @@ wwv_flow_api.create_plugin(
 '  --',
 '  l_autoswitch        := yn_to_tf(p_plugin.attribute_01);',
 '  l_meridians         := yn_to_tf(p_plugin.attribute_02);',
-'  l_format            := p_plugin.attribute_03;',
+'  l_format            := sys.htf.escape_sc(p_plugin.attribute_03);',
 '  l_mousewheel        := yn_to_tf(p_plugin.attribute_04);',
-'  l_init_animation    := p_plugin.attribute_05;',
+'  l_init_animation    := sys.htf.escape_sc(p_plugin.attribute_05);',
 '  l_theme             := p_plugin.attribute_06;',
 '  --',
 '  --Add Theme CSS Files',
@@ -140,23 +146,67 @@ wwv_flow_api.create_plugin(
 '',
 '    p_result.is_navigable := false;',
 '  else',
-'    l_html := ''<input type="text" id="'' || p_item.id || ''" />'';',
+'    l_html := ''<input type="text" id="'' || p_item.name || ''" name="'' || p_item.name || ''" />'';',
 '',
 '    sys.htp.p(l_html);',
 '',
+'    --',
+'    --Logging',
+'    --',
+'    if apex_application.g_debug then',
+'      l_logging := true;',
+'    else',
+'      l_logging := false;',
+'    end if;',
+'',
 '    apex_javascript.add_onload_code (',
-'      p_code => ''$("#'' || p_item.id || ''").timeDropper({''                                                 ||',
-'        apex_javascript.add_attribute(''autoswitch''     , l_autoswitch)                                    ||',
-'        apex_javascript.add_attribute(''meridians''      , l_meridians)                                     ||',
-'        apex_javascript.add_attribute(''format''         , sys.htf.escape_sc(l_format))                     ||',
-'        apex_javascript.add_attribute(''mousewheel''     , l_mousewheel)                                    ||',
-'        apex_javascript.add_attribute(''init_animation'' , sys.htf.escape_sc(l_init_animation))             ||',
-'        apex_javascript.add_attribute(''setCurrentTime'' , l_set_current_time)                              ||',
-'        apex_javascript.add_attribute(''primaryColor''   , sys.htf.escape_sc(l_primary_color))              ||',
-'        apex_javascript.add_attribute(''textColor''      , sys.htf.escape_sc(l_text_color))                 ||',
-'        apex_javascript.add_attribute(''backgroundColor'', sys.htf.escape_sc(l_background_color))           ||',
-'        apex_javascript.add_attribute(''borderColor''    , sys.htf.escape_sc(l_border_color), false, false) ||',
-'      ''});'');',
+'      p_code => ''apexTimeDropper.initTimeDropper('' ||',
+'                   apex_javascript.add_value (',
+'                       p_value     => p_item.name,',
+'                       p_add_comma => true )      || ''{'' ||',
+'                   apex_javascript.add_attribute (',
+'                       p_name      => ''autoswitch'',',
+'                       p_value     => l_autoswitch,',
+'                       p_add_comma => true )       ||',
+'                   apex_javascript.add_attribute (',
+'                       p_name      => ''meridians'',',
+'                       p_value     => l_meridians,',
+'                       p_add_comma => true )       ||',
+'                   apex_javascript.add_attribute (',
+'                       p_name      => ''format'',',
+'                       p_value     => l_format,',
+'                       p_add_comma => true )       ||',
+'                   apex_javascript.add_attribute (',
+'                       p_name      => ''mousewheel'',',
+'                       p_value     => l_mousewheel,',
+'                       p_add_comma => true )       ||',
+'                   apex_javascript.add_attribute (',
+'                       p_name      => ''initAnimation'',',
+'                       p_value     => l_init_animation,',
+'                       p_add_comma => true )       ||',
+'                   apex_javascript.add_attribute (',
+'                       p_name      => ''setCurrentTime'',',
+'                       p_value     => l_set_current_time,',
+'                       p_add_comma => true )       ||',
+'                   apex_javascript.add_attribute (',
+'                       p_name      => ''primaryColor'',',
+'                       p_value     => l_primary_color,',
+'                       p_add_comma => true )       ||',
+'                   apex_javascript.add_attribute (',
+'                       p_name      => ''textColor'',',
+'                       p_value     => l_text_color,',
+'                       p_add_comma => true )       ||',
+'                   apex_javascript.add_attribute (',
+'                       p_name      => ''backgroundColor'',',
+'                       p_value     => l_background_color,',
+'                       p_add_comma => true )       ||',
+'                   apex_javascript.add_attribute (',
+'                       p_name      => ''borderColor'',',
+'                       p_value     => l_border_color,',
+'                       p_add_comma => false )      || ''},'' ||',
+'                   apex_javascript.add_value (',
+'                       p_value     => l_logging,',
+'                       p_add_comma => false ) || '');'' );',
 '',
 '    p_result.is_navigable := true;',
 '  end if;',
@@ -169,13 +219,13 @@ wwv_flow_api.create_plugin(
 ,p_standard_attributes=>'VISIBLE:FORM_ELEMENT:SESSION_STATE:READONLY:SOURCE:ELEMENT:WIDTH:ELEMENT_OPTION:ICON'
 ,p_substitute_attributes=>true
 ,p_subscribe_plugin_settings=>true
-,p_version_identifier=>'1.0.0'
+,p_version_identifier=>'1.0.1'
 ,p_about_url=>'https://github.com/OraCoolAPEX/apex-plugin-timedropper'
-,p_files_version=>5
+,p_files_version=>18
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(31602935246212809253)
-,p_plugin_id=>wwv_flow_api.id(31399573127279589756)
+ p_id=>wwv_flow_api.id(69846800714019669704)
+,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
 ,p_attribute_scope=>'APPLICATION'
 ,p_attribute_sequence=>1
 ,p_display_sequence=>10
@@ -189,8 +239,8 @@ wwv_flow_api.create_plugin_attribute(
 '<p>Default: false</p>'))
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(31603049573455803380)
-,p_plugin_id=>wwv_flow_api.id(31399573127279589756)
+ p_id=>wwv_flow_api.id(69846915041262663831)
+,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
 ,p_attribute_scope=>'APPLICATION'
 ,p_attribute_sequence=>2
 ,p_display_sequence=>20
@@ -204,8 +254,8 @@ wwv_flow_api.create_plugin_attribute(
 '<p>Default: false</p>'))
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(31604317072577834914)
-,p_plugin_id=>wwv_flow_api.id(31399573127279589756)
+ p_id=>wwv_flow_api.id(69848182540384695365)
+,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
 ,p_attribute_scope=>'APPLICATION'
 ,p_attribute_sequence=>3
 ,p_display_sequence=>30
@@ -230,8 +280,8 @@ wwv_flow_api.create_plugin_attribute(
 '</p>'))
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(31604391177537840725)
-,p_plugin_id=>wwv_flow_api.id(31399573127279589756)
+ p_id=>wwv_flow_api.id(69848256645344701176)
+,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
 ,p_attribute_scope=>'APPLICATION'
 ,p_attribute_sequence=>4
 ,p_display_sequence=>40
@@ -245,8 +295,8 @@ wwv_flow_api.create_plugin_attribute(
 '<p>Default: false</p>'))
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(31605476512682850120)
-,p_plugin_id=>wwv_flow_api.id(31399573127279589756)
+ p_id=>wwv_flow_api.id(69849341980489710571)
+,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
 ,p_attribute_scope=>'APPLICATION'
 ,p_attribute_sequence=>5
 ,p_display_sequence=>50
@@ -261,22 +311,22 @@ wwv_flow_api.create_plugin_attribute(
 '<p>Default: fadeIn</p>'))
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(31605511859296837245)
-,p_plugin_attribute_id=>wwv_flow_api.id(31605476512682850120)
+ p_id=>wwv_flow_api.id(69849377327103697696)
+,p_plugin_attribute_id=>wwv_flow_api.id(69849341980489710571)
 ,p_display_sequence=>10
 ,p_display_value=>'Fade In'
 ,p_return_value=>'fadeIn'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(31605513900689838074)
-,p_plugin_attribute_id=>wwv_flow_api.id(31605476512682850120)
+ p_id=>wwv_flow_api.id(69849379368496698525)
+,p_plugin_attribute_id=>wwv_flow_api.id(69849341980489710571)
 ,p_display_sequence=>20
 ,p_display_value=>'Drop Down'
 ,p_return_value=>'dropDown'
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(31606353642621875647)
-,p_plugin_id=>wwv_flow_api.id(31399573127279589756)
+ p_id=>wwv_flow_api.id(69850219110428736098)
+,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
 ,p_attribute_scope=>'APPLICATION'
 ,p_attribute_sequence=>6
 ,p_display_sequence=>60
@@ -289,36 +339,36 @@ wwv_flow_api.create_plugin_attribute(
 ,p_help_text=>'<p>Set the name of style that you have assigned on the stylesheet generated by the theme generator.</p>'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(31606411605789876723)
-,p_plugin_attribute_id=>wwv_flow_api.id(31606353642621875647)
+ p_id=>wwv_flow_api.id(69850277073596737174)
+,p_plugin_attribute_id=>wwv_flow_api.id(69850219110428736098)
 ,p_display_sequence=>10
 ,p_display_value=>'Vita'
 ,p_return_value=>'vita'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(31606443280046863740)
-,p_plugin_attribute_id=>wwv_flow_api.id(31606353642621875647)
+ p_id=>wwv_flow_api.id(69850308747853724191)
+,p_plugin_attribute_id=>wwv_flow_api.id(69850219110428736098)
 ,p_display_sequence=>20
 ,p_display_value=>'Vita-Dark'
 ,p_return_value=>'vita_dark'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(31606443908770864723)
-,p_plugin_attribute_id=>wwv_flow_api.id(31606353642621875647)
+ p_id=>wwv_flow_api.id(69850309376577725174)
+,p_plugin_attribute_id=>wwv_flow_api.id(69850219110428736098)
 ,p_display_sequence=>30
 ,p_display_value=>'Vita-Red'
 ,p_return_value=>'vita_red'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(31606449409352865605)
-,p_plugin_attribute_id=>wwv_flow_api.id(31606353642621875647)
+ p_id=>wwv_flow_api.id(69850314877159726056)
+,p_plugin_attribute_id=>wwv_flow_api.id(69850219110428736098)
 ,p_display_sequence=>40
 ,p_display_value=>'Vita-Slate'
 ,p_return_value=>'vita_slate'
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(31605849911302858456)
-,p_plugin_id=>wwv_flow_api.id(31399573127279589756)
+ p_id=>wwv_flow_api.id(69849715379109718907)
+,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>1
 ,p_display_sequence=>10
@@ -330,6 +380,112 @@ wwv_flow_api.create_plugin_attribute(
 ,p_help_text=>wwv_flow_string.join(wwv_flow_t_varchar2(
 '<p>Automatically set current time by default. If set "false", the input "value" attribute is considered as main time value.</p>',
 '<p>Default: true</p>'))
+);
+wwv_flow_api.create_plugin_event(
+ p_id=>wwv_flow_api.id(38709860055564688761)
+,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
+,p_name=>'apex-timedropper-change'
+,p_display_name=>'APEX Time Dropper - Change'
+);
+end;
+/
+begin
+wwv_flow_api.g_varchar2_table := wwv_flow_api.empty_varchar2_table;
+wwv_flow_api.g_varchar2_table(1) := '2F2A20466978205356472048656967687420497373756520696E204945203131202A2F0D0A2E74642D73656C656374207B0D0A20206865696768743A20333670783B0D0A7D';
+null;
+end;
+/
+begin
+wwv_flow_api.create_plugin_file(
+ p_id=>wwv_flow_api.id(38710844074286489089)
+,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
+,p_file_name=>'server/css/apextimedropper.css'
+,p_mime_type=>'text/css'
+,p_file_charset=>'utf-8'
+,p_file_content=>wwv_flow_api.varchar2_to_blob(wwv_flow_api.g_varchar2_table)
+);
+end;
+/
+begin
+wwv_flow_api.g_varchar2_table := wwv_flow_api.empty_varchar2_table;
+wwv_flow_api.g_varchar2_table(1) := '2E74642D73656C6563747B6865696768743A333670787D';
+null;
+end;
+/
+begin
+wwv_flow_api.create_plugin_file(
+ p_id=>wwv_flow_api.id(38710844324173489091)
+,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
+,p_file_name=>'server/css/apextimedropper.min.css'
+,p_mime_type=>'text/css'
+,p_file_charset=>'utf-8'
+,p_file_content=>wwv_flow_api.varchar2_to_blob(wwv_flow_api.g_varchar2_table)
+);
+end;
+/
+begin
+wwv_flow_api.g_varchar2_table := wwv_flow_api.empty_varchar2_table;
+wwv_flow_api.g_varchar2_table(1) := '2F2F20415045582054696D6544726F707065722046756E6374696F6E730D0A2F2F20417574686F723A20457269636B204469617A0D0A2F2F2056657273696F6E3A20312E302E310D0A0D0A2F2F476C6F62616C204E616D6573706163650D0A7661722061';
+wwv_flow_api.g_varchar2_table(2) := '70657854696D6544726F70706572203D207B0D0A2020696E697454696D6544726F707065723A2066756E6374696F6E28704974656D49642C20704F7074696F6E732C20704C6F6767696E6729207B0D0A2020202076617220764F7074696F6E73203D2070';
+wwv_flow_api.g_varchar2_table(3) := '4F7074696F6E733B0D0A2020202076617220764C6F6767696E67203D20704C6F6767696E673B0D0A2020202076617220764175746F737769746368203D20764F7074696F6E732E6175746F7377697463683B0D0A2020202076617220764D657269646961';
+wwv_flow_api.g_varchar2_table(4) := '6E73203D20764F7074696F6E732E6D6572696469616E733B0D0A202020207661722076466F726D6174203D20764F7074696F6E732E666F726D61743B0D0A2020202076617220764D6F757365776865656C203D20764F7074696F6E732E6D6F7573657768';
+wwv_flow_api.g_varchar2_table(5) := '65656C3B0D0A202020207661722076496E6974416E696D6174696F6E203D20764F7074696F6E732E696E6974416E696D6174696F6E3B0D0A20202020766172207653657443757272656E7454696D65203D20764F7074696F6E732E73657443757272656E';
+wwv_flow_api.g_varchar2_table(6) := '7454696D653B0D0A2020202076617220765072696D617279436F6C6F72203D20764F7074696F6E732E7072696D617279436F6C6F723B0D0A20202020766172207654657874436F6C6F72203D20764F7074696F6E732E74657874436F6C6F723B0D0A2020';
+wwv_flow_api.g_varchar2_table(7) := '202076617220764261636B67726F756E64436F6C6F72203D20764F7074696F6E732E6261636B67726F756E64436F6C6F723B0D0A202020207661722076426F72646572436F6C6F72203D20764F7074696F6E732E626F72646572436F6C6F723B0D0A0D0A';
+wwv_flow_api.g_varchar2_table(8) := '2020202069662028764C6F6767696E6729207B0D0A202020202020636F6E736F6C652E6C6F6728704974656D4964202B2027202D206170657854696D6544726F707065722E6175746F7377697463683A2027202B20764175746F737769746368293B0D0A';
+wwv_flow_api.g_varchar2_table(9) := '202020202020636F6E736F6C652E6C6F6728704974656D4964202B2027202D206170657854696D6544726F707065722E6D6572696469616E733A2027202B20764D6572696469616E73293B0D0A202020202020636F6E736F6C652E6C6F6728704974656D';
+wwv_flow_api.g_varchar2_table(10) := '4964202B2027202D206170657854696D6544726F707065722E666F726D61743A2027202B2076466F726D6174293B0D0A202020202020636F6E736F6C652E6C6F6728704974656D4964202B2027202D206170657854696D6544726F707065722E6D6F7573';
+wwv_flow_api.g_varchar2_table(11) := '65776865656C3A2027202B20764D6F757365776865656C293B0D0A202020202020636F6E736F6C652E6C6F6728704974656D4964202B2027202D206170657854696D6544726F707065722E696E6974416E696D6174696F6E3A2027202B2076496E697441';
+wwv_flow_api.g_varchar2_table(12) := '6E696D6174696F6E293B0D0A202020202020636F6E736F6C652E6C6F6728704974656D4964202B2027202D206170657854696D6544726F707065722E73657443757272656E7454696D653A2027202B207653657443757272656E7454696D65293B0D0A20';
+wwv_flow_api.g_varchar2_table(13) := '2020202020636F6E736F6C652E6C6F6728704974656D4964202B2027202D206170657854696D6544726F707065722E7072696D617279436F6C6F723A2027202B20765072696D617279436F6C6F72293B0D0A202020202020636F6E736F6C652E6C6F6728';
+wwv_flow_api.g_varchar2_table(14) := '704974656D4964202B2027202D206170657854696D6544726F707065722E74657874436F6C6F723A2027202B207654657874436F6C6F72293B0D0A202020202020636F6E736F6C652E6C6F6728704974656D4964202B2027202D206170657854696D6544';
+wwv_flow_api.g_varchar2_table(15) := '726F707065722E6261636B67726F756E64436F6C6F723A2027202B20764261636B67726F756E64436F6C6F72293B0D0A202020202020636F6E736F6C652E6C6F6728704974656D4964202B2027202D206170657854696D6544726F707065722E626F7264';
+wwv_flow_api.g_varchar2_table(16) := '6572436F6C6F723A2027202B2076426F72646572436F6C6F72293B0D0A202020207D0D0A0D0A202020202428272327202B20704974656D4964292E74696D6544726F70706572287B0D0A202020202020226175746F73776974636822203A20764175746F';
+wwv_flow_api.g_varchar2_table(17) := '7377697463682C0D0A202020202020226D6572696469616E7322203A20764D6572696469616E732C0D0A20202020202022666F726D617422203A2076466F726D61742C0D0A202020202020226D6F757365776865656C22203A20764D6F75736577686565';
+wwv_flow_api.g_varchar2_table(18) := '6C2C0D0A20202020202022696E69745F616E696D6174696F6E22203A2076496E6974416E696D6174696F6E2C0D0A2020202020202273657443757272656E7454696D6522203A207653657443757272656E7454696D652C0D0A202020202020227072696D';
+wwv_flow_api.g_varchar2_table(19) := '617279436F6C6F7222203A20765072696D617279436F6C6F722C0D0A2020202020202274657874436F6C6F7222203A207654657874436F6C6F722C0D0A202020202020226261636B67726F756E64436F6C6F7222203A20764261636B67726F756E64436F';
+wwv_flow_api.g_varchar2_table(20) := '6C6F722C0D0A20202020202022626F72646572436F6C6F7222203A2076426F72646572436F6C6F720D0A202020207D293B0D0A0D0A20202020766172207654696D6544726F707065724964203D20202428272327202B20704974656D4964293B0D0A2020';
+wwv_flow_api.g_varchar2_table(21) := '2020766172207654696D6544726F70706572496E646578203D2024287654696D6544726F707065724964292E696E64657828272E74642D696E70757427293B0D0A0D0A202020202428272374642D636C6F636B2D27202B207654696D6544726F70706572';
+wwv_flow_api.g_varchar2_table(22) := '496E646578202B2027202E74642D6F7665726C617927292E6F6E2827746F756368656E64206D6F7573657570272C2066756E6374696F6E2829207B0D0A20202020202024287654696D6544726F707065724964292E747269676765722827617065782D74';
+wwv_flow_api.g_varchar2_table(23) := '696D6564726F707065722D6368616E676527293B0D0A202020207D293B0D0A0D0A202020200D0A20207D0D0A7D3B';
+null;
+end;
+/
+begin
+wwv_flow_api.create_plugin_file(
+ p_id=>wwv_flow_api.id(38710844724326489093)
+,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
+,p_file_name=>'server/js/apextimedropper.js'
+,p_mime_type=>'application/x-javascript'
+,p_file_charset=>'utf-8'
+,p_file_content=>wwv_flow_api.varchar2_to_blob(wwv_flow_api.g_varchar2_table)
+);
+end;
+/
+begin
+wwv_flow_api.g_varchar2_table := wwv_flow_api.empty_varchar2_table;
+wwv_flow_api.g_varchar2_table(1) := '766172206170657854696D6544726F707065723D7B696E697454696D6544726F707065723A66756E6374696F6E286F2C652C72297B76617220693D652C703D722C6E3D692E6175746F7377697463682C743D692E6D6572696469616E732C6C3D692E666F';
+wwv_flow_api.g_varchar2_table(2) := '726D61742C613D692E6D6F757365776865656C2C6D3D692E696E6974416E696D6174696F6E2C733D692E73657443757272656E7454696D652C633D692E7072696D617279436F6C6F722C753D692E74657874436F6C6F722C673D692E6261636B67726F75';
+wwv_flow_api.g_varchar2_table(3) := '6E64436F6C6F722C783D692E626F72646572436F6C6F723B70262628636F6E736F6C652E6C6F67286F2B22202D206170657854696D6544726F707065722E6175746F7377697463683A20222B6E292C636F6E736F6C652E6C6F67286F2B22202D20617065';
+wwv_flow_api.g_varchar2_table(4) := '7854696D6544726F707065722E6D6572696469616E733A20222B74292C636F6E736F6C652E6C6F67286F2B22202D206170657854696D6544726F707065722E666F726D61743A20222B6C292C636F6E736F6C652E6C6F67286F2B22202D20617065785469';
+wwv_flow_api.g_varchar2_table(5) := '6D6544726F707065722E6D6F757365776865656C3A20222B61292C636F6E736F6C652E6C6F67286F2B22202D206170657854696D6544726F707065722E696E6974416E696D6174696F6E3A20222B6D292C636F6E736F6C652E6C6F67286F2B22202D2061';
+wwv_flow_api.g_varchar2_table(6) := '70657854696D6544726F707065722E73657443757272656E7454696D653A20222B73292C636F6E736F6C652E6C6F67286F2B22202D206170657854696D6544726F707065722E7072696D617279436F6C6F723A20222B63292C636F6E736F6C652E6C6F67';
+wwv_flow_api.g_varchar2_table(7) := '286F2B22202D206170657854696D6544726F707065722E74657874436F6C6F723A20222B75292C636F6E736F6C652E6C6F67286F2B22202D206170657854696D6544726F707065722E6261636B67726F756E64436F6C6F723A20222B67292C636F6E736F';
+wwv_flow_api.g_varchar2_table(8) := '6C652E6C6F67286F2B22202D206170657854696D6544726F707065722E626F72646572436F6C6F723A20222B7829292C24282223222B6F292E74696D6544726F70706572287B6175746F7377697463683A6E2C6D6572696469616E733A742C666F726D61';
+wwv_flow_api.g_varchar2_table(9) := '743A6C2C6D6F757365776865656C3A612C696E69745F616E696D6174696F6E3A6D2C73657443757272656E7454696D653A732C7072696D617279436F6C6F723A632C74657874436F6C6F723A752C6261636B67726F756E64436F6C6F723A672C626F7264';
+wwv_flow_api.g_varchar2_table(10) := '6572436F6C6F723A787D293B76617220643D24282223222B6F292C433D242864292E696E64657828222E74642D696E70757422293B2428222374642D636C6F636B2D222B432B22202E74642D6F7665726C617922292E6F6E2822746F756368656E64206D';
+wwv_flow_api.g_varchar2_table(11) := '6F7573657570222C66756E6374696F6E28297B242864292E747269676765722822617065782D74696D6564726F707065722D6368616E676522297D297D7D3B';
+null;
+end;
+/
+begin
+wwv_flow_api.create_plugin_file(
+ p_id=>wwv_flow_api.id(38710845109630489094)
+,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
+,p_file_name=>'server/js/apextimedropper.min.js'
+,p_mime_type=>'application/x-javascript'
+,p_file_charset=>'utf-8'
+,p_file_content=>wwv_flow_api.varchar2_to_blob(wwv_flow_api.g_varchar2_table)
 );
 end;
 /
@@ -444,8 +600,8 @@ end;
 /
 begin
 wwv_flow_api.create_plugin_file(
- p_id=>wwv_flow_api.id(31400080528754591507)
-,p_plugin_id=>wwv_flow_api.id(31399573127279589756)
+ p_id=>wwv_flow_api.id(38710845517198489097)
+,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
 ,p_file_name=>'server/lib/timedropper/timedropper.css'
 ,p_mime_type=>'text/css'
 ,p_file_charset=>'utf-8'
@@ -623,8 +779,8 @@ end;
 /
 begin
 wwv_flow_api.create_plugin_file(
- p_id=>wwv_flow_api.id(31400091285152591509)
-,p_plugin_id=>wwv_flow_api.id(31399573127279589756)
+ p_id=>wwv_flow_api.id(38710845955931489100)
+,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
 ,p_file_name=>'server/lib/timedropper/timedropper.js'
 ,p_mime_type=>'application/x-javascript'
 ,p_file_charset=>'utf-8'
@@ -703,8 +859,8 @@ end;
 /
 begin
 wwv_flow_api.create_plugin_file(
- p_id=>wwv_flow_api.id(31400092100645591513)
-,p_plugin_id=>wwv_flow_api.id(31399573127279589756)
+ p_id=>wwv_flow_api.id(38710846370570489103)
+,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
 ,p_file_name=>'server/lib/timedropper/timedropper.min.css'
 ,p_mime_type=>'text/css'
 ,p_file_charset=>'utf-8'
@@ -790,8 +946,8 @@ end;
 /
 begin
 wwv_flow_api.create_plugin_file(
- p_id=>wwv_flow_api.id(31400092835898591514)
-,p_plugin_id=>wwv_flow_api.id(31399573127279589756)
+ p_id=>wwv_flow_api.id(38710846707192489106)
+,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
 ,p_file_name=>'server/lib/timedropper/timedropper.min.js'
 ,p_mime_type=>'application/x-javascript'
 ,p_file_charset=>'utf-8'
