@@ -1,0 +1,4 @@
+/* Fix SVG Height Issue in IE 11 */
+.td-select {
+  height: 36px;
+}

@@ -4,6 +4,7 @@ procedure render_timedropper (
   p_param  in            apex_plugin.t_item_render_param,
   p_result in out nocopy apex_plugin.t_item_render_result )
 is
+  l_logging              boolean;
   l_autoswitch           boolean;
   l_meridians            boolean;
   l_format               varchar2(7);
@@ -37,9 +38,9 @@ begin
   --
   l_autoswitch        := yn_to_tf(p_plugin.attribute_01);
   l_meridians         := yn_to_tf(p_plugin.attribute_02);
-  l_format            := p_plugin.attribute_03;
+  l_format            := sys.htf.escape_sc(p_plugin.attribute_03);
   l_mousewheel        := yn_to_tf(p_plugin.attribute_04);
-  l_init_animation    := p_plugin.attribute_05;
+  l_init_animation    := sys.htf.escape_sc(p_plugin.attribute_05);
   l_theme             := p_plugin.attribute_06;
   --
   --Add Theme CSS Files
@@ -101,23 +102,67 @@ begin
 
     p_result.is_navigable := false;
   else
-    l_html := '<input type="text" id="' || p_item.id || '" />';
+    l_html := '<input type="text" id="' || p_item.name || '" name="' || p_item.name || '" />';
 
     sys.htp.p(l_html);
 
+    --
+    --Logging
+    --
+    if apex_application.g_debug then
+      l_logging := true;
+    else
+      l_logging := false;
+    end if;
+
     apex_javascript.add_onload_code (
-      p_code => '$("#' || p_item.id || '").timeDropper({'                                                 ||
-        apex_javascript.add_attribute('autoswitch'     , l_autoswitch)                                    ||
-        apex_javascript.add_attribute('meridians'      , l_meridians)                                     ||
-        apex_javascript.add_attribute('format'         , sys.htf.escape_sc(l_format))                     ||
-        apex_javascript.add_attribute('mousewheel'     , l_mousewheel)                                    ||
-        apex_javascript.add_attribute('init_animation' , sys.htf.escape_sc(l_init_animation))             ||
-        apex_javascript.add_attribute('setCurrentTime' , l_set_current_time)                              ||
-        apex_javascript.add_attribute('primaryColor'   , sys.htf.escape_sc(l_primary_color))              ||
-        apex_javascript.add_attribute('textColor'      , sys.htf.escape_sc(l_text_color))                 ||
-        apex_javascript.add_attribute('backgroundColor', sys.htf.escape_sc(l_background_color))           ||
-        apex_javascript.add_attribute('borderColor'    , sys.htf.escape_sc(l_border_color), false, false) ||
-      '});');
+      p_code => 'apexTimeDropper.initTimeDropper(' ||
+                   apex_javascript.add_value (
+                       p_value     => p_item.name,
+                       p_add_comma => true )      || '{' ||
+                   apex_javascript.add_attribute (
+                       p_name      => 'autoswitch',
+                       p_value     => l_autoswitch,
+                       p_add_comma => true )       ||
+                   apex_javascript.add_attribute (
+                       p_name      => 'meridians',
+                       p_value     => l_meridians,
+                       p_add_comma => true )       ||
+                   apex_javascript.add_attribute (
+                       p_name      => 'format',
+                       p_value     => l_format,
+                       p_add_comma => true )       ||
+                   apex_javascript.add_attribute (
+                       p_name      => 'mousewheel',
+                       p_value     => l_mousewheel,
+                       p_add_comma => true )       ||
+                   apex_javascript.add_attribute (
+                       p_name      => 'initAnimation',
+                       p_value     => l_init_animation,
+                       p_add_comma => true )       ||
+                   apex_javascript.add_attribute (
+                       p_name      => 'setCurrentTime',
+                       p_value     => l_set_current_time,
+                       p_add_comma => true )       ||
+                   apex_javascript.add_attribute (
+                       p_name      => 'primaryColor',
+                       p_value     => l_primary_color,
+                       p_add_comma => true )       ||
+                   apex_javascript.add_attribute (
+                       p_name      => 'textColor',
+                       p_value     => l_text_color,
+                       p_add_comma => true )       ||
+                   apex_javascript.add_attribute (
+                       p_name      => 'backgroundColor',
+                       p_value     => l_background_color,
+                       p_add_comma => true )       ||
+                   apex_javascript.add_attribute (
+                       p_name      => 'borderColor',
+                       p_value     => l_border_color,
+                       p_add_comma => false )      || '},' ||
+                   apex_javascript.add_value (
+                       p_value     => l_logging,
+                       p_add_comma => false ) || ');' );
 
     p_result.is_navigable := true;
   end if;
