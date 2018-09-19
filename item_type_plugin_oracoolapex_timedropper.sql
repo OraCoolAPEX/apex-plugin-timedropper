@@ -1,3 +1,4 @@
+prompt --application/set_environment
 set define off verify off feedback off
 whenever sqlerror exit sql.sqlcode rollback
 --------------------------------------------------------------------------------
@@ -5,30 +6,25 @@ whenever sqlerror exit sql.sqlcode rollback
 -- ORACLE Application Express (APEX) export file
 --
 -- You should run the script connected to SQL*Plus as the Oracle user
--- APEX_050100 or as the owner (parsing schema) of the application.
+-- APEX_180100 or as the owner (parsing schema) of the application.
 --
 -- NOTE: Calls to apex_application_install override the defaults below.
 --
 --------------------------------------------------------------------------------
 begin
 wwv_flow_api.import_begin (
- p_version_yyyy_mm_dd=>'2016.08.24'
-,p_release=>'5.1.3.00.05'
+ p_version_yyyy_mm_dd=>'2018.04.04'
+,p_release=>'18.1.0.00.45'
 ,p_default_workspace_id=>14861999474993887539
-,p_default_application_id=>44444222
+,p_default_application_id=>42424242
 ,p_default_owner=>'ORACOOLAPEX'
 );
-end;
-/
-prompt --application/ui_types
-begin
-null;
 end;
 /
 prompt --application/shared_components/plugins/item_type/oracoolapex_timedropper
 begin
 wwv_flow_api.create_plugin(
- p_id=>wwv_flow_api.id(69643438595086450207)
+ p_id=>wwv_flow_api.id(90654319087233139428)
 ,p_plugin_type=>'ITEM TYPE'
 ,p_name=>'ORACOOLAPEX.TIMEDROPPER'
 ,p_display_name=>'Time Dropper'
@@ -146,7 +142,7 @@ wwv_flow_api.create_plugin(
 '',
 '    p_result.is_navigable := false;',
 '  else',
-'    l_html := ''<input type="text" id="'' || p_item.name || ''" name="'' || p_item.name || ''" />'';',
+'    l_html := ''<input type="text" id="'' || p_item.name || ''" name="'' || p_item.name || ''" class="apex-item-text" />'';',
 '',
 '    sys.htp.p(l_html);',
 '',
@@ -224,8 +220,8 @@ wwv_flow_api.create_plugin(
 ,p_files_version=>18
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(69846800714019669704)
-,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
+ p_id=>wwv_flow_api.id(90857681206166358925)
+,p_plugin_id=>wwv_flow_api.id(90654319087233139428)
 ,p_attribute_scope=>'APPLICATION'
 ,p_attribute_sequence=>1
 ,p_display_sequence=>10
@@ -239,8 +235,8 @@ wwv_flow_api.create_plugin_attribute(
 '<p>Default: false</p>'))
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(69846915041262663831)
-,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
+ p_id=>wwv_flow_api.id(90857795533409353052)
+,p_plugin_id=>wwv_flow_api.id(90654319087233139428)
 ,p_attribute_scope=>'APPLICATION'
 ,p_attribute_sequence=>2
 ,p_display_sequence=>20
@@ -254,8 +250,8 @@ wwv_flow_api.create_plugin_attribute(
 '<p>Default: false</p>'))
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(69848182540384695365)
-,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
+ p_id=>wwv_flow_api.id(90859063032531384586)
+,p_plugin_id=>wwv_flow_api.id(90654319087233139428)
 ,p_attribute_scope=>'APPLICATION'
 ,p_attribute_sequence=>3
 ,p_display_sequence=>30
@@ -280,8 +276,8 @@ wwv_flow_api.create_plugin_attribute(
 '</p>'))
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(69848256645344701176)
-,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
+ p_id=>wwv_flow_api.id(90859137137491390397)
+,p_plugin_id=>wwv_flow_api.id(90654319087233139428)
 ,p_attribute_scope=>'APPLICATION'
 ,p_attribute_sequence=>4
 ,p_display_sequence=>40
@@ -295,8 +291,8 @@ wwv_flow_api.create_plugin_attribute(
 '<p>Default: false</p>'))
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(69849341980489710571)
-,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
+ p_id=>wwv_flow_api.id(90860222472636399792)
+,p_plugin_id=>wwv_flow_api.id(90654319087233139428)
 ,p_attribute_scope=>'APPLICATION'
 ,p_attribute_sequence=>5
 ,p_display_sequence=>50
@@ -311,22 +307,22 @@ wwv_flow_api.create_plugin_attribute(
 '<p>Default: fadeIn</p>'))
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(69849377327103697696)
-,p_plugin_attribute_id=>wwv_flow_api.id(69849341980489710571)
+ p_id=>wwv_flow_api.id(90860257819250386917)
+,p_plugin_attribute_id=>wwv_flow_api.id(90860222472636399792)
 ,p_display_sequence=>10
 ,p_display_value=>'Fade In'
 ,p_return_value=>'fadeIn'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(69849379368496698525)
-,p_plugin_attribute_id=>wwv_flow_api.id(69849341980489710571)
+ p_id=>wwv_flow_api.id(90860259860643387746)
+,p_plugin_attribute_id=>wwv_flow_api.id(90860222472636399792)
 ,p_display_sequence=>20
 ,p_display_value=>'Drop Down'
 ,p_return_value=>'dropDown'
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(69850219110428736098)
-,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
+ p_id=>wwv_flow_api.id(90861099602575425319)
+,p_plugin_id=>wwv_flow_api.id(90654319087233139428)
 ,p_attribute_scope=>'APPLICATION'
 ,p_attribute_sequence=>6
 ,p_display_sequence=>60
@@ -339,36 +335,36 @@ wwv_flow_api.create_plugin_attribute(
 ,p_help_text=>'<p>Set the name of style that you have assigned on the stylesheet generated by the theme generator.</p>'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(69850277073596737174)
-,p_plugin_attribute_id=>wwv_flow_api.id(69850219110428736098)
+ p_id=>wwv_flow_api.id(90861157565743426395)
+,p_plugin_attribute_id=>wwv_flow_api.id(90861099602575425319)
 ,p_display_sequence=>10
 ,p_display_value=>'Vita'
 ,p_return_value=>'vita'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(69850308747853724191)
-,p_plugin_attribute_id=>wwv_flow_api.id(69850219110428736098)
+ p_id=>wwv_flow_api.id(90861189240000413412)
+,p_plugin_attribute_id=>wwv_flow_api.id(90861099602575425319)
 ,p_display_sequence=>20
 ,p_display_value=>'Vita-Dark'
 ,p_return_value=>'vita_dark'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(69850309376577725174)
-,p_plugin_attribute_id=>wwv_flow_api.id(69850219110428736098)
+ p_id=>wwv_flow_api.id(90861189868724414395)
+,p_plugin_attribute_id=>wwv_flow_api.id(90861099602575425319)
 ,p_display_sequence=>30
 ,p_display_value=>'Vita-Red'
 ,p_return_value=>'vita_red'
 );
 wwv_flow_api.create_plugin_attr_value(
- p_id=>wwv_flow_api.id(69850314877159726056)
-,p_plugin_attribute_id=>wwv_flow_api.id(69850219110428736098)
+ p_id=>wwv_flow_api.id(90861195369306415277)
+,p_plugin_attribute_id=>wwv_flow_api.id(90861099602575425319)
 ,p_display_sequence=>40
 ,p_display_value=>'Vita-Slate'
 ,p_return_value=>'vita_slate'
 );
 wwv_flow_api.create_plugin_attribute(
- p_id=>wwv_flow_api.id(69849715379109718907)
-,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
+ p_id=>wwv_flow_api.id(90860595871256408128)
+,p_plugin_id=>wwv_flow_api.id(90654319087233139428)
 ,p_attribute_scope=>'COMPONENT'
 ,p_attribute_sequence=>1
 ,p_display_sequence=>10
@@ -382,8 +378,8 @@ wwv_flow_api.create_plugin_attribute(
 '<p>Default: true</p>'))
 );
 wwv_flow_api.create_plugin_event(
- p_id=>wwv_flow_api.id(38709860055564688761)
-,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
+ p_id=>wwv_flow_api.id(59720740547711377982)
+,p_plugin_id=>wwv_flow_api.id(90654319087233139428)
 ,p_name=>'apex-timedropper-change'
 ,p_display_name=>'APEX Time Dropper - Change'
 );
@@ -397,8 +393,8 @@ end;
 /
 begin
 wwv_flow_api.create_plugin_file(
- p_id=>wwv_flow_api.id(38710844074286489089)
-,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
+ p_id=>wwv_flow_api.id(59721724566433178310)
+,p_plugin_id=>wwv_flow_api.id(90654319087233139428)
 ,p_file_name=>'server/css/apextimedropper.css'
 ,p_mime_type=>'text/css'
 ,p_file_charset=>'utf-8'
@@ -414,8 +410,8 @@ end;
 /
 begin
 wwv_flow_api.create_plugin_file(
- p_id=>wwv_flow_api.id(38710844324173489091)
-,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
+ p_id=>wwv_flow_api.id(59721724816320178312)
+,p_plugin_id=>wwv_flow_api.id(90654319087233139428)
 ,p_file_name=>'server/css/apextimedropper.min.css'
 ,p_mime_type=>'text/css'
 ,p_file_charset=>'utf-8'
@@ -453,8 +449,8 @@ end;
 /
 begin
 wwv_flow_api.create_plugin_file(
- p_id=>wwv_flow_api.id(38710844724326489093)
-,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
+ p_id=>wwv_flow_api.id(59721725216473178314)
+,p_plugin_id=>wwv_flow_api.id(90654319087233139428)
 ,p_file_name=>'server/js/apextimedropper.js'
 ,p_mime_type=>'application/x-javascript'
 ,p_file_charset=>'utf-8'
@@ -480,8 +476,8 @@ end;
 /
 begin
 wwv_flow_api.create_plugin_file(
- p_id=>wwv_flow_api.id(38710845109630489094)
-,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
+ p_id=>wwv_flow_api.id(59721725601777178315)
+,p_plugin_id=>wwv_flow_api.id(90654319087233139428)
 ,p_file_name=>'server/js/apextimedropper.min.js'
 ,p_mime_type=>'application/x-javascript'
 ,p_file_charset=>'utf-8'
@@ -600,8 +596,8 @@ end;
 /
 begin
 wwv_flow_api.create_plugin_file(
- p_id=>wwv_flow_api.id(38710845517198489097)
-,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
+ p_id=>wwv_flow_api.id(59721726009345178318)
+,p_plugin_id=>wwv_flow_api.id(90654319087233139428)
 ,p_file_name=>'server/lib/timedropper/timedropper.css'
 ,p_mime_type=>'text/css'
 ,p_file_charset=>'utf-8'
@@ -779,8 +775,8 @@ end;
 /
 begin
 wwv_flow_api.create_plugin_file(
- p_id=>wwv_flow_api.id(38710845955931489100)
-,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
+ p_id=>wwv_flow_api.id(59721726448078178321)
+,p_plugin_id=>wwv_flow_api.id(90654319087233139428)
 ,p_file_name=>'server/lib/timedropper/timedropper.js'
 ,p_mime_type=>'application/x-javascript'
 ,p_file_charset=>'utf-8'
@@ -859,8 +855,8 @@ end;
 /
 begin
 wwv_flow_api.create_plugin_file(
- p_id=>wwv_flow_api.id(38710846370570489103)
-,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
+ p_id=>wwv_flow_api.id(59721726862717178324)
+,p_plugin_id=>wwv_flow_api.id(90654319087233139428)
 ,p_file_name=>'server/lib/timedropper/timedropper.min.css'
 ,p_mime_type=>'text/css'
 ,p_file_charset=>'utf-8'
@@ -946,8 +942,8 @@ end;
 /
 begin
 wwv_flow_api.create_plugin_file(
- p_id=>wwv_flow_api.id(38710846707192489106)
-,p_plugin_id=>wwv_flow_api.id(69643438595086450207)
+ p_id=>wwv_flow_api.id(59721727199339178327)
+,p_plugin_id=>wwv_flow_api.id(90654319087233139428)
 ,p_file_name=>'server/lib/timedropper/timedropper.min.js'
 ,p_mime_type=>'application/x-javascript'
 ,p_file_charset=>'utf-8'

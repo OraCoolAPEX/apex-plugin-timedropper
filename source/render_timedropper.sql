@@ -102,7 +102,7 @@ begin
 
     p_result.is_navigable := false;
   else
-    l_html := '<input type="text" id="' || p_item.name || '" name="' || p_item.name || '" />';
+    l_html := '<input type="text" id="' || p_item.name || '" name="' || p_item.name || '" class="apex-item-text" />';
 
     sys.htp.p(l_html);
 
